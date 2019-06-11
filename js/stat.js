@@ -1,3 +1,5 @@
+'use strict';
+
 (function () {
 
   var DEBUG = false;
@@ -29,19 +31,19 @@
   var HIST_NAME_LINE_HEIGHT = 20;
   var HIST_TIME_LINE_HEIGHT = 10;
 
-  var HIST_MAIN_COLUMN_COLOR = "red";
-  var HIST_COLUMN_COLOR = "hsl(240, rndSaturation%, 45%)";
+  var HIST_MAIN_COLUMN_COLOR = 'red';
+  var HIST_COLUMN_COLOR = 'hsl(240, rndSaturation%, 45%)';
 
 
   var drawCloud = function (ctx, color, offset) {
     ctx.fillStyle = color;
     ctx.fillRect(CLOUD_X + offset, CLOUD_Y + offset, CLOUD_WIDTH, CLOUD_HEIGHT);
-  }
+  };
 
   var getHistX = function (qty) {
     var width = (HIST_COLUMN_WIDTH + HIST_COLUMN_GAP) * qty - HIST_COLUMN_GAP;
     return CLOUD_X + CLOUD_WIDTH / 2 - width / 2;
-  }
+  };
 
   var getColumnFillStyle = function (name) {
     if (name === 'Вы') {
@@ -50,7 +52,7 @@
 
     var rndSaturation = Math.floor(Math.random() * 100);
     return HIST_COLUMN_COLOR.replace('rndSaturation', rndSaturation);
-  }
+  };
 
   var getMax = function (arr) {
     var max = 0;
@@ -60,7 +62,7 @@
       }
     }
     return max;
-  }
+  };
 
   window.renderStatistics = function (ctx, names, times) {
 
@@ -94,16 +96,16 @@
       ctx.fillText(Math.round(times[i]), timeX, timeY);
 
     }
-  }
+  };
 
   if (DEBUG) {
     var canvas = document.createElement('canvas');
     canvas.width = 700;
     canvas.height = 300;
-    renderStatistics(
-      canvas.getContext('2d'),
-      ['Вы', 'Кекс', 'Катя', 'Игорь'],
-      [2725, 4025, 1244, 1339]
+    window.renderStatistics(
+        canvas.getContext('2d'),
+        ['Вы', 'Кекс', 'Катя', 'Игорь'],
+        [2725, 4025, 1244, 1339]
     );
 
     document.querySelector('.demo').appendChild(canvas);
