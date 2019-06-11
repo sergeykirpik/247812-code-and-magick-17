@@ -2,8 +2,6 @@
 
 (function () {
 
-  var DEBUG = false;
-
   var CLOUD_X = 100;
   var CLOUD_Y = 10;
   var CLOUD_WIDTH = 420;
@@ -56,11 +54,11 @@
 
   var getMax = function (arr) {
     var max = 0;
-    for (var i = 0; i < arr.length; i++) {
-      if (arr[i] > max) {
-        max = arr[i];
+    arr.forEach(function (el) {
+      if (el > max) {
+        max = el;
       }
-    }
+    });
     return max;
   };
 
@@ -76,40 +74,29 @@
     ctx.fillText('Список результатов:', TEXT_X, TEXT_Y + TEXT_LINE_GAP);
 
     var timeMax = getMax(times);
-    for (var i = 0; i < names.length; i++) {
+    names.forEach(function (namesEl, index) {
 
-      var nameX = getHistX(names.length) + (HIST_COLUMN_WIDTH + HIST_COLUMN_GAP) * i;
+      var timesEl = times[index];
+
+      var nameX = getHistX(names.length) + (HIST_COLUMN_WIDTH + HIST_COLUMN_GAP) * index;
       var nameY = HIST_Y;
       ctx.fillStyle = TEXT_COLOR;
-      ctx.fillText(names[i], nameX, nameY);
+      ctx.fillText(namesEl, nameX, nameY);
 
-      var rectHeight = HIST_HEIGHT * (times[i] / timeMax);
+      var rectHeight = HIST_HEIGHT * (timesEl / timeMax);
 
       var rectX = nameX;
       var rectY = nameY - rectHeight - HIST_NAME_LINE_HEIGHT;
-      ctx.fillStyle = getColumnFillStyle(names[i]);
+      ctx.fillStyle = getColumnFillStyle(namesEl);
       ctx.fillRect(rectX, rectY, HIST_COLUMN_WIDTH, rectHeight);
 
       var timeX = nameX;
       var timeY = rectY - HIST_TIME_LINE_HEIGHT;
       ctx.fillStyle = TEXT_COLOR;
-      ctx.fillText(Math.round(times[i]), timeX, timeY);
+      ctx.fillText(Math.round(timesEl), timeX, timeY);
 
-    }
+    });
   };
-
-  if (DEBUG) {
-    var canvas = document.createElement('canvas');
-    canvas.width = 700;
-    canvas.height = 300;
-    window.renderStatistics(
-        canvas.getContext('2d'),
-        ['Вы', 'Кекс', 'Катя', 'Игорь'],
-        [2725, 4025, 1244, 1339]
-    );
-
-    document.querySelector('.demo').appendChild(canvas);
-  }
 
 })();
 
