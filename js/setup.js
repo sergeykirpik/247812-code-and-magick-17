@@ -41,6 +41,9 @@
     'green',
   ];
 
+  var KEY_ENTER = 13;
+  var KEY_ESC = 27;
+
   var getRandomInt = function (min, max) {
     return Math.floor(Math.random() * (max + 1 - min)) + min;
   };
@@ -71,7 +74,7 @@
     return wizardElement;
   };
 
-  var generateDOM = function (wizards) {
+  var renderSimilarWizards = function (wizards) {
     var wizardTemplate = document.querySelector('#similar-wizard-template')
       .content
       .querySelector('.setup-similar-item');
@@ -82,11 +85,63 @@
       fragment.appendChild(renderWizardElement(wizard, wizardTemplate));
     });
 
-    document.querySelector('.setup-similar-list').appendChild(fragment);
+    var setupSimilarListEl = document.querySelector('.setup-similar-list');
+    setupSimilarListEl.innerHTML = '';
+    setupSimilarListEl.appendChild(fragment);
     document.querySelector('.setup-similar').classList.remove('hidden');
   };
 
-  document.querySelector('.setup').classList.remove('hidden');
-  generateDOM(generateMockData(4));
+  var setupDialog = document.querySelector('.setup');
+  
+  var closeSetupDialog = function () {
+    setupDialog.classList.add('hidden');
+  };
+
+  var openDialogEscKeyDownHandler = function (evt) {
+    if (evt.keyCode === KEY_ESC) {
+      document.removeEventListener('keydown', openDialogEscKeyDownHandler);
+      closeSetupDialog();
+    }
+  };
+
+  var setupUserName = setupDialog.querySelector('.setup-user-name');
+  setupUserName.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === KEY_ESC) {
+      evt.stopPropagation();
+    }
+  });
+
+  var openSetupDialog = function () {
+    renderSimilarWizards(generateMockData(4));
+    setupDialog.classList.remove('hidden');
+    document.addEventListener('keydown', openDialogEscKeyDownHandler);
+  };
+
+  var setupOpenBtn = document.querySelector('.setup-open');
+  setupOpenBtn.addEventListener('click', function (evt) {
+    openSetupDialog();
+  });
+
+  var setupOpenIcon = setupOpenBtn.querySelector('.setup-open-icon');
+  setupOpenIcon.setAttribute('tabindex', '0');
+  setupOpenIcon.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === KEY_ENTER) {
+      openSetupDialog();
+    }
+  });
+
+  var setupCloseBtn = setupDialog.querySelector('.setup-close');
+  setupCloseBtn.addEventListener('click', function (evt) {
+    closeSetupDialog();
+  });
+
+  setupCloseBtn.setAttribute('tabindex', '0');
+  setupCloseBtn.addEventListener('keydown', function (evt) {
+    if (evt.keyCode == KEY_ENTER) {
+      closeSetupDialog();
+    }
+  });
+
+  
 
 })();
