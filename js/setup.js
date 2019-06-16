@@ -41,8 +41,26 @@
     'green',
   ];
 
+  var FIREBALL_COLORS = [
+    '#ee4830',
+    '#30a8ee',
+    '#5ce6c0',
+    '#e848d5',
+    '#e6e848',
+  ];
+
   var KEY_ENTER = 13;
   var KEY_ESC = 27;
+
+  function createArraySwitcher(arr) {
+    var index = 0;
+    return function () {
+      if (++index >= arr.length) {
+        index = 0;
+      }
+      return arr[index];
+    };
+  }
 
   var getRandomInt = function (min, max) {
     return Math.floor(Math.random() * (max + 1 - min)) + min;
@@ -92,56 +110,97 @@
   };
 
   var setupDialog = document.querySelector('.setup');
-  
-  var closeSetupDialog = function () {
-    setupDialog.classList.add('hidden');
+  setupDialog.form = setupDialog.querySelector('.setup-wizard-form');
+
+  setupDialog.open = function () {
+    renderSimilarWizards(generateMockData(4));
+    setupDialog.classList.remove('hidden');
+    document.addEventListener('keydown', setupDialog.escKeyDownHandler);
+    setupDialog.userName.focus();
   };
 
-  var openDialogEscKeyDownHandler = function (evt) {
+  setupDialog.close = function () {
+    setupDialog.classList.add('hidden');
+    setupDialog.removeEventListener('keydow', setupDialog.escKeyDownHandler);
+    setupDialog.form.reset();
+  };
+
+  setupDialog.escKeyDownHandler = function (evt) {
     if (evt.keyCode === KEY_ESC) {
-      document.removeEventListener('keydown', openDialogEscKeyDownHandler);
-      closeSetupDialog();
+      setupDialog.close();
     }
   };
 
-  var setupUserName = setupDialog.querySelector('.setup-user-name');
-  setupUserName.addEventListener('keydown', function (evt) {
+  setupDialog.userName = setupDialog.querySelector('.setup-user-name');
+  setupDialog.userName.addEventListener('keydown', function (evt) {
     if (evt.keyCode === KEY_ESC) {
       evt.stopPropagation();
     }
   });
+  setupDialog.userName.addEventListener('invalid', function () {
+    var userName = setupDialog.userName;
+    if (userName.validity.tooShort) {
+      userName.setCustomValidity('Имя персонажа не может содержать менее 2 символов.');
 
-  var openSetupDialog = function () {
-    renderSimilarWizards(generateMockData(4));
-    setupDialog.classList.remove('hidden');
-    document.addEventListener('keydown', openDialogEscKeyDownHandler);
-  };
+    } else if (userName.validity.valueMissing) {
+      userName.setCustomValidity('Имя персонажа должно быть заполнено.');
+
+    } else if (userName.validity.tooLong) {
+      userName.setCustomValidity('Максимальная длина имени персонажа — 25 символов.');
+
+    } else {
+      setupDialog.userName.setCustomValidity('');
+
+    }
+  });
+
+  setupDialog.closeBtn = setupDialog.querySelector('.setup-close');
+  setupDialog.closeBtn.addEventListener('click', function () {
+    setupDialog.close();
+  });
+
+  setupDialog.closeBtn.setAttribute('tabindex', '0');
+  setupDialog.closeBtn.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === KEY_ENTER) {
+      setupDialog.close();
+    }
+  });
 
   var setupOpenBtn = document.querySelector('.setup-open');
-  setupOpenBtn.addEventListener('click', function (evt) {
-    openSetupDialog();
+  setupOpenBtn.addEventListener('click', function () {
+    setupDialog.open();
   });
 
   var setupOpenIcon = setupOpenBtn.querySelector('.setup-open-icon');
   setupOpenIcon.setAttribute('tabindex', '0');
   setupOpenIcon.addEventListener('keydown', function (evt) {
     if (evt.keyCode === KEY_ENTER) {
-      openSetupDialog();
+      setupDialog.open();
     }
   });
 
-  var setupCloseBtn = setupDialog.querySelector('.setup-close');
-  setupCloseBtn.addEventListener('click', function (evt) {
-    closeSetupDialog();
+  var wizardCoat = setupDialog.querySelector('.setup-wizard .wizard-coat');
+  wizardCoat.nextColor = createArraySwitcher(COAT_COLORS);
+  wizardCoat.addEventListener('click', function () {
+    var newColor = wizardCoat.nextColor();
+    wizardCoat.style.fill = newColor;
+    setupDialog.form['coat-color'].value = newColor;
   });
 
-  setupCloseBtn.setAttribute('tabindex', '0');
-  setupCloseBtn.addEventListener('keydown', function (evt) {
-    if (evt.keyCode == KEY_ENTER) {
-      closeSetupDialog();
-    }
+  var wizardEyes = setupDialog.querySelector('.setup-wizard .wizard-eyes');
+  wizardEyes.nextColor = createArraySwitcher(EYES_COLORS);
+  wizardEyes.addEventListener('click', function () {
+    var newColor = wizardEyes.nextColor();
+    wizardEyes.style.fill = newColor;
+    setupDialog.form['eyes-color'].value = newColor;
   });
 
-  
+  var fireballWrap = setupDialog.querySelector('.setup-fireball-wrap');
+  fireballWrap.nextColor = createArraySwitcher(FIREBALL_COLORS);
+  fireballWrap.addEventListener('click', function () {
+    var newColor = fireballWrap.nextColor();
+    fireballWrap.style.backgroundColor = newColor;
+    setupDialog.form['fireball-color'].value = newColor;
+  });
 
 })();
