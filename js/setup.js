@@ -116,18 +116,26 @@
     renderSimilarWizards(generateMockData(4));
     setupDialog.classList.remove('hidden');
     document.addEventListener('keydown', setupDialog.escKeyDownHandler);
+    document.addEventListener('keydown', setupDialog.enterKeyDownHandler, true);
     setupDialog.userName.focus();
   };
 
   setupDialog.close = function () {
     setupDialog.classList.add('hidden');
-    setupDialog.removeEventListener('keydow', setupDialog.escKeyDownHandler);
+    document.removeEventListener('keydown', setupDialog.escKeyDownHandler);
+    document.removeEventListener('keydown', setupDialog.enterKeyDownHandler);
     setupDialog.form.reset();
   };
 
   setupDialog.escKeyDownHandler = function (evt) {
     if (evt.keyCode === KEY_ESC) {
       setupDialog.close();
+    }
+  };
+
+  setupDialog.enterKeyDownHandler = function (evt) {
+    if (evt.keyCode === KEY_ENTER && !evt.target.classList.contains('setup-submit')) {
+      evt.preventDefault();
     }
   };
 
