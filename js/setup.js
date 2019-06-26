@@ -114,6 +114,8 @@
 
   setupDialog.open = function () {
     renderSimilarWizards(generateMockData(4));
+    setupDialog.style.left = '';
+    setupDialog.style.top = '';
     setupDialog.classList.remove('hidden');
     document.addEventListener('keydown', setupDialog.escKeyDownHandler);
     document.addEventListener('keydown', setupDialog.enterKeyDownHandler, true);
