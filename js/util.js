@@ -38,6 +38,26 @@
 
     dragHandle.addEventListener('mousedown', mouseDownHandler);
   };
+
+  exports.createArraySwitcher = function (arr) {
+    var index = 0;
+    return function () {
+      if (++index >= arr.length) {
+        index = 0;
+      }
+      return arr[index];
+    };
+  };
+
+  exports.getRandomInt = function (min, max) {
+    return Math.floor(Math.random() * (max + 1 - min)) + min;
+  };
+
+  exports.getRandomElement = function (arr) {
+    return arr[exports.getRandomInt(0, arr.length - 1)];
+  };
+
+
   window.util = exports;
 
 })({});
