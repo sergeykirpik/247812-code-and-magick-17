@@ -3,6 +3,8 @@
 (function () {
 
   var util = window.util;
+  var msg = window.msg;
+  var backend = window.backend;
 
   var COAT_COLORS = [
     'rgb(101, 137, 164)',
@@ -36,8 +38,8 @@
     var wizardElement = wizardTemplate.cloneNode(true);
 
     wizardElement.querySelector('.setup-similar-label').textContent = wizard.name;
-    wizardElement.querySelector('.wizard-coat').style.fill = wizard.coatColor;
-    wizardElement.querySelector('.wizard-eyes').style.fill = wizard.eyesColor;
+    wizardElement.querySelector('.wizard-coat').style.fill = wizard.colorCoat;
+    wizardElement.querySelector('.wizard-eyes').style.fill = wizard.colorEyes;
 
     return wizardElement;
   };
@@ -62,8 +64,30 @@
   var setupDialog = document.querySelector('.setup');
   setupDialog.form = setupDialog.querySelector('.setup-wizard-form');
 
+  setupDialog.form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    backend.save(
+        new FormData(evt.target),
+        function () {
+          setupDialog.close();
+          msg.success('Данные сохранены');
+        },
+        function (err) {
+          msg.error('Не удалось сохранить данные. ' + err);
+        }
+    );
+  });
+
   setupDialog.open = function () {
-    renderSimilarWizards(window.getData(4));
+    backend.load(
+        function (data) {
+          renderSimilarWizards(data.slice(0, 4));
+        },
+        function (err) {
+          msg.error('Ошибка загрузки данных: ' + err);
+        }
+    );
+
     setupDialog.style.left = '';
     setupDialog.style.top = '';
     setupDialog.classList.remove('hidden');
