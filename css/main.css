@@ -1041,3 +1041,8 @@ input[type=radio]:checked + .review-mark-label
 .alert-error {
     background-color: red;
 }
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: darkgray;
+}

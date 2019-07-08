@@ -40,6 +40,9 @@
     },
     error: function (text) {
       showMessage(text, 'alert-error');
+    },
+    warning: function (text) {
+      showMessage(text, 'alert-warning');
     }
   };
 })();
