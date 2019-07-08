@@ -3,7 +3,7 @@
 (function () {
   var GET_SIMILAR_WIZARDS_URL = 'https://js.dump.academy/code-and-magick/data';
   var SAVE_FORM_DATA_URL = 'https://js.dump.academy/code-and-magick';
-  var DEFAULT_XHR_TIMEOUT = 5000;
+  var DEFAULT_XHR_TIMEOUT = 3000;
 
   function noop() {}
 
@@ -14,6 +14,7 @@
     xhr.open(method, url);
     this.onSuccess = noop;
     this.onError = noop;
+    this.onTimeout = null;
 
     xhr.addEventListener('load', function () {
       if (xhr.status === 200) {
@@ -34,7 +35,11 @@
     });
 
     xhr.addEventListener('timeout', function () {
-      loader.onError('Таймаут соединения');
+      if (loader.onTimeout) {
+        loader.onTimeout();
+      } else {
+        loader.onError('Таймаут соединения');
+      }
     });
     this.xhr = xhr;
   }
@@ -47,6 +52,10 @@
       var loader = new Loader('GET', GET_SIMILAR_WIZARDS_URL);
       loader.onSuccess = onLoad || noop;
       loader.onError = onError || noop;
+      loader.onTimeout = function () {
+        window.msg.warning('Таймаут соединения: работаем в демо-режиме');
+        onLoad(window.mockdata);
+      };
       loader.send();
     },
     save: function (formData, onLoad, onError) {
